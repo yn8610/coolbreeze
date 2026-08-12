@@ -2,6 +2,17 @@
 
 Every change, in date order. Newest at the top.
 
+## 2026-08-12 — Version 3.2: visible live weather proof
+
+- Auto-check faster: **every 5 minutes** while the page is open.
+- Coming back to the tab forces a fresh check instantly.
+- The temperature **flashes** every time a fresh reading arrives — visible
+  proof the feed is live even when the number is unchanged.
+- Shows the **weather station's own reading time** (e.g. "station reading
+  at 09:00") — when the station publishes new data, this time moves.
+- Real stations only publish new readings every 15 minutes — so between
+  checks, temperatures genuinely don't change; now you can see that clearly.
+
 ## 2026-08-12 — Version 3.1: weather auto-refresh while the page is open
 
 - The dashboard now **auto-checks the weather every 10 minutes even while

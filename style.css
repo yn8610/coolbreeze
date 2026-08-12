@@ -238,6 +238,12 @@ main {
 .weather-icon { font-size: 34px; }
 .weather-temp { font-size: 30px; font-weight: 800; color: #0b3d66; }
 .weather-desc { font-size: 14px; color: #5a6b7c; }
+.weather-sub { display: block; font-size: 11px; color: #8a9aa8; margin-top: 2px; }
+@keyframes tempflash {
+  0% { color: #c47f09; transform: scale(1.14); }
+  100% { color: #0b3d66; transform: scale(1); }
+}
+.weather-temp.flash { animation: tempflash 0.9s ease; }
 .weather-days { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; }
 .weather-day {
   background: #f4f7fa;

@@ -473,6 +473,7 @@
 
         const w = {
           ts: Date.now(),
+          measured: fc.current.time,  // the time the weather station published this reading
           city: b.city,
           temp: Math.round(fc.current.temperature_2m),
           code: fc.current.weather_code,
@@ -506,9 +507,17 @@
       const b = activeBuilding();
       const cur = wmo(w.code);
       const tonightsLow = w.daily[0].lo;
+      // The station's own publication time — proves the feed is live even
+      // when the temperature itself hasn't changed.
+      let measured = '';
+      if (w.measured) {
+        const m = new Date(w.measured);
+        measured = '<span class="weather-sub">station reading at ' +
+          m.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) + '</span>';
+      }
       let html = '<div class="weather-now"><span class="weather-icon">' + cur[0] + '</span>' +
-        '<span class="weather-temp">' + w.temp + '°C</span>' +
-        '<span class="weather-desc">' + cur[1] + ' in ' + w.city + '</span></div>';
+        '<div><span class="weather-temp">' + w.temp + '°C</span>' +
+        '<span class="weather-desc">' + cur[1] + ' in ' + w.city + '</span>' + measured + '</div></div>';
       html += '<div class="weather-days">';
       w.daily.forEach(d => {
         const c = wmo(d.code);
@@ -518,7 +527,16 @@
       });
       html += '</div>';
       body.innerHTML = html;
-      updated.textContent = 'Last updated: ' + clockTime(w.ts) + '. Auto-refreshes every 10 minutes.';
+      // Flash the temperature whenever a fresh check arrives, even if the
+      // number itself didn't move — visible proof the feed is live.
+      const t = body.querySelector('.weather-temp');
+      if (t) {
+        t.classList.remove('flash');
+        void t.offsetWidth;
+        t.classList.add('flash');
+      }
+      updated.textContent = 'Fetched ' + clockTime(w.ts) + ' · next auto-check in about ' +
+        (CHECK_EVERY_MIN - Math.floor((Date.now() - w.ts) / 60000)) + ' min';
       updateNextCheck();
 
       if (tonightsLow <= 24) {
@@ -550,8 +568,8 @@
       const b = activeBuilding();
       const el = document.getElementById('weatherUpdated');
       if (!b.weather) return;
-      const mins = Math.max(0, 10 - Math.floor((Date.now() - b.weather.ts) / 60000));
-      el.textContent = 'Last updated: ' + clockTime(b.weather.ts) + ' · next auto-check in about ' + mins + ' min';
+      const mins = Math.max(0, CHECK_EVERY_MIN - Math.floor((Date.now() - b.weather.ts) / 60000));
+      el.textContent = 'Fetched ' + clockTime(b.weather.ts) + ' · next auto-check in about ' + mins + ' min';
     }
 
     document.getElementById('btnLogout').addEventListener('click', () => {
@@ -559,12 +577,17 @@
       window.location.href = 'index.html';
     });
 
+    const CHECK_EVERY_MIN = 5;  // how often we check the weather
     renderAll();
     setInterval(updateScoreboard, 3000);
     // Real weather measurements update every 15 minutes at the source,
-    // so we auto-check every 10 minutes even while the page is open.
-    setInterval(() => { loadWeather(true); }, 10 * 60 * 1000);
+    // so we auto-check every 5 minutes even while the page is open.
+    setInterval(() => { loadWeather(true); }, CHECK_EVERY_MIN * 60 * 1000);
     setInterval(updateNextCheck, 20000);
+    // Coming back to the tab forces a fresh check right away.
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) loadWeather(true);
+    });
   </script>
 </body>
 </html>
