@@ -1,0 +1,246 @@
+/* CoolBreeze — the look of the app. */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  background: #f2f6fa;
+  color: #1d2b3a;
+  line-height: 1.5;
+}
+
+.hidden { display: none; }
+
+/* ---------- Log in / sign up page ---------- */
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, #0b3d66, #1273b8);
+  padding: 20px;
+}
+
+.auth-box {
+  background: #fff;
+  border-radius: 14px;
+  padding: 28px;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+}
+
+.logo { font-size: 24px; font-weight: 700; color: #0b3d66; }
+.auth-box .logo { text-align: center; }
+.tagline { text-align: center; color: #5a6b7c; margin: 4px 0 18px; font-size: 14px; }
+
+.tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+.tab {
+  flex: 1;
+  padding: 9px;
+  border: 1px solid #d4dde6;
+  border-radius: 8px;
+  background: #f4f7fa;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: #5a6b7c;
+}
+.tab.active { background: #0b3d66; color: #fff; border-color: #0b3d66; }
+
+label { display: block; font-size: 13px; font-weight: 600; margin: 10px 0 4px; color: #3c4c5c; }
+input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #cfd9e2;
+  border-radius: 8px;
+  font-size: 15px;
+}
+input:focus { outline: 2px solid #1273b8; border-color: transparent; }
+
+.btn-primary {
+  width: 100%;
+  margin-top: 16px;
+  padding: 11px;
+  border: none;
+  border-radius: 8px;
+  background: #1273b8;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn-primary:hover { background: #0b5f99; }
+
+.note { margin-top: 18px; font-size: 12px; color: #7a8b9b; text-align: center; }
+.msg { margin-top: 10px; font-size: 14px; text-align: center; min-height: 20px; }
+
+/* ---------- Dashboard ---------- */
+.dash-page { padding: 0; }
+
+header {
+  background: #0b3d66;
+  color: #fff;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+header .logo { color: #fff; font-size: 20px; }
+.header-right { display: flex; align-items: center; gap: 12px; }
+.btn-small {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.18);
+  color: #fff;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+main {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 2px 8px rgba(13,45,70,0.08);
+}
+
+.scoreboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+.card-label { font-size: 13px; font-weight: 700; color: #5a6b7c; text-transform: uppercase; letter-spacing: 0.4px; }
+.big-num { font-size: 30px; font-weight: 800; color: #0b3d66; margin: 6px 0 2px; }
+.card-sub { font-size: 12px; color: #8a9aa8; }
+
+.status-badge {
+  display: inline-block;
+  margin: 8px 0 4px;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 15px;
+}
+.status-badge.green { background: #e2f6e9; color: #1b7f3a; }
+.status-badge.red { background: #fdeaea; color: #c0392b; }
+
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  height: 160px;
+  margin-top: 12px;
+}
+.bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; gap: 6px; }
+.bar {
+  width: 100%;
+  max-width: 44px;
+  border-radius: 6px 6px 0 0;
+  background: linear-gradient(180deg, #3aa5e6, #1273b8);
+  min-height: 4px;
+  transition: height 0.5s ease;
+}
+.bar-label { font-size: 12px; color: #5a6b7c; }
+.chart-note { margin-top: 10px; font-size: 12px; color: #8a9aa8; }
+
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.estimate { font-size: 18px; font-weight: 700; color: #1b7f3a; margin: 14px 0 4px; }
+.tiny { font-size: 12px; color: #8a9aa8; }
+
+.btn-big {
+  width: 100%;
+  margin-top: 14px;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #18a058, #12874a);
+  color: #fff;
+  font-size: 17px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(24,160,88,0.35);
+}
+.btn-big:hover { background: linear-gradient(135deg, #12874a, #0e6f3d); }
+
+.alert-list { list-style: none; margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+.alert-list li {
+  padding: 10px 12px;
+  background: #f7fafc;
+  border-left: 4px solid #1273b8;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+@media (max-width: 520px) {
+  .row { grid-template-columns: 1fr; }
+}
+
+/* ---------- Building switcher ---------- */
+.building-switcher { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+.building-chip {
+  position: relative;
+  background: #f4f7fa;
+  border: 2px solid #d4dde6;
+  border-radius: 10px;
+  padding: 9px 30px 9px 12px;
+  cursor: pointer;
+  min-width: 150px;
+}
+.building-chip.active { border-color: #1273b8; background: #e8f3fb; }
+.chip-name { display: block; font-weight: 700; font-size: 14px; color: #1d2b3a; }
+.chip-city { display: block; font-size: 12px; color: #5a6b7c; }
+.chip-remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  border: none;
+  background: none;
+  color: #a04a2b;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 2px;
+}
+.building-add {
+  border: 2px dashed #9db8cd;
+  background: none;
+  color: #1273b8;
+  border-radius: 10px;
+  padding: 9px 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 14px;
+}
+.building-add:hover { background: #e8f3fb; }
+
+/* ---------- Weather card ---------- */
+.weather-now { display: flex; align-items: center; gap: 12px; margin: 12px 0 14px; }
+.weather-icon { font-size: 34px; }
+.weather-temp { font-size: 30px; font-weight: 800; color: #0b3d66; }
+.weather-desc { font-size: 14px; color: #5a6b7c; }
+.weather-days { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; }
+.weather-day {
+  background: #f4f7fa;
+  border-radius: 8px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+}
+.wd-name { font-weight: 700; color: #1d2b3a; }
+.wd-temp { color: #5a6b7c; }
+.weather-suggestion {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: #fef7e0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #8a6400;
+}

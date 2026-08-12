@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CoolBreeze — Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="dash-page">
+  <header>
+    <div class="logo">❄️ CoolBreeze</div>
+    <div class="header-right">
+      <span id="whoAmI"></span>
+      <button id="btnLogout" class="btn-small">Log out</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Building switcher -->
+    <section class="card">
+      <p class="card-label">Your buildings</p>
+      <div id="buildingSwitcher" class="building-switcher"></div>
+      <div id="addBuildingForm" class="add-building hidden">
+        <div class="row">
+          <div>
+            <label>Building name</label>
+            <input id="nbName" type="text" placeholder="e.g. Sunita Tower">
+          </div>
+          <div>
+            <label>City</label>
+            <input id="nbCity" type="text" placeholder="e.g. Chennai">
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Monthly electricity bill (₹)</label>
+            <input id="nbBill" type="number" value="300000" min="0">
+          </div>
+          <div>
+            <label>Building size (sq ft)</label>
+            <input id="nbSize" type="number" value="20000" min="0">
+          </div>
+        </div>
+        <button id="btnAddBuilding" class="btn-primary">Add this building</button>
+        <p id="addMsg" class="msg"></p>
+      </div>
+    </section>
+
+    <!-- Scoreboard -->
+    <section class="scoreboard">
+      <div class="card">
+        <p class="card-label" id="buildingNameLabel">Building</p>
+        <p id="energyNow" class="big-num">—</p>
+        <p class="card-sub">updating live (demo)</p>
+      </div>
+      <div class="card">
+        <p class="card-label">Savings today</p>
+        <p id="savingsToday" class="big-num">—</p>
+        <p class="card-sub">estimated</p>
+      </div>
+      <div class="card status-card">
+        <p class="card-label">Cooling status</p>
+        <p id="statusBadge" class="status-badge">—</p>
+        <p id="statusNote" class="card-sub"></p>
+      </div>
+    </section>
+
+    <!-- Live weather -->
+    <section class="card">
+      <p class="card-label">Live weather — <span id="weatherCity">…</span></p>
+      <div id="weatherBody">
+        <p id="weatherMsg" class="card-sub">Fetching the forecast…</p>
+      </div>
+      <p id="weatherSuggestion" class="weather-suggestion"></p>
+    </section>
+
+    <!-- Weekly graph -->
+    <section class="card graph-card">
+      <p class="card-label">Energy used — last week (kWh)</p>
+      <div id="barChart" class="bar-chart"></div>
+      <p class="chart-note">The bars go down as you apply savings suggestions.</p>
+    </section>
+
+    <!-- Bill & savings estimate -->
+    <section class="card">
+      <p class="card-label">Bill &amp; estimated savings</p>
+      <div class="row">
+        <div>
+          <label>Monthly electricity bill (₹)</label>
+          <input id="billInput" type="number" value="450000" min="0">
+        </div>
+        <div>
+          <label>Building size (sq ft)</label>
+          <input id="sizeInput" type="number" value="25000" min="0">
+        </div>
+      </div>
+      <p id="estimateText" class="estimate"></p>
+      <p class="tiny">Estimate: a simple formula (25% of typical cooling share), compared with similar buildings. Real measured savings replace this once live data arrives.</p>
+
+      <button id="btnApply" class="btn-big">💡 Apply smart cooling — save now</button>
+      <p id="applyMsg" class="msg"></p>
+    </section>
+
+    <!-- Alerts feed -->
+    <section class="card">
+      <p class="card-label">Alerts (email &amp; text alerts coming in a later version)</p>
+      <ul id="alertList" class="alert-list"></ul>
+    </section>
+  </main>
+
+  <script>
+    const user = localStorage.getItem('cb_session');
+    if (!user) { window.location.href = 'index.html'; }
+
+    const users = JSON.parse(localStorage.getItem('cb_users') || '{}');
+    const profile = users[user] || { name: user };
+
+    // ---- Data: a list of buildings for this owner ----
+    function loadStore() {
+      const raw = localStorage.getItem('cb_' + user);
+      if (!raw) { window.location.href = 'index.html'; return null; }
+      let s = JSON.parse(raw);
+      // Upgrade old one-building format to the new buildings list, if needed.
+      if (!s.buildings) {
+        s = {
+          buildings: [{
+            id: 'demo',
+            name: s.buildingName || 'Demo Building',
+            city: 'Mumbai',
+            sizeSqft: s.sizeSqft || 25000,
+            monthlyBill: s.monthlyBill || 450000,
+            history: s.history || [],
+            savingsToday: s.savingsToday || 0,
+            totalSaved: s.totalSaved || 0,
+            lastApply: s.lastApply || null,
+            alerts: s.alerts || [],
+            weather: null
+          }],
+          activeId: 'demo'
+        };
+        saveStore(s);
+      }
+      return s;
+    }
+    function saveStore(s) { localStorage.setItem('cb_' + user, JSON.stringify(s)); }
+
+    let store = loadStore();
+    function activeBuilding() { return store.buildings.find(b => b.id === store.activeId); }
+
+    // ---- Building switcher ----
+    const switcher = document.getElementById('buildingSwitcher');
+
+    function drawSwitcher() {
+      switcher.innerHTML = '';
+      store.buildings.forEach(b => {
+        const chip = document.createElement('div');
+        chip.className = 'building-chip' + (b.id === store.activeId ? ' active' : '');
+        chip.innerHTML = '<span class="chip-name">' + b.name + '</span>' +
+          '<span class="chip-city">' + b.city + '</span>';
+        chip.addEventListener('click', () => {
+          store.activeId = b.id;
+          saveStore(store);
+          renderAll();
+        });
+        if (store.buildings.length > 1) {
+          const rm = document.createElement('button');
+          rm.className = 'chip-remove';
+          rm.textContent = '✕';
+          rm.title = 'Remove this building';
+          rm.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (confirm('Remove "' + b.name + '" and all its data?')) {
+              store.buildings = store.buildings.filter(x => x.id !== b.id);
+              if (store.activeId === b.id) store.activeId = store.buildings[0].id;
+              saveStore(store);
+              renderAll();
+            }
+          });
+          chip.appendChild(rm);
+        }
+        switcher.appendChild(chip);
+      });
+      const addBtn = document.createElement('button');
+      addBtn.className = 'building-add';
+      addBtn.textContent = '＋ Add building';
+      addBtn.addEventListener('click', () => {
+        document.getElementById('addBuildingForm').classList.toggle('hidden');
+      });
+      switcher.appendChild(addBtn);
+    }
+
+    // ---- Add a building ----
+    const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+    document.getElementById('btnAddBuilding').addEventListener('click', () => {
+      const name = document.getElementById('nbName').value.trim();
+      const city = document.getElementById('nbCity').value.trim();
+      const bill = Number(document.getElementById('nbBill').value) || 0;
+      const size = Number(document.getElementById('nbSize').value) || 0;
+      const msg = document.getElementById('addMsg');
+
+      if (!name || !city || bill <= 0 || size <= 0) {
+        msg.textContent = 'Please fill in name, city, bill and size.';
+        msg.style.color = '#c0392b';
+        return;
+      }
+
+      // Seed a realistic starting week from the bill:
+      // bill/months/30 days divided by ~₹9 per kWh, slowly dropping.
+      const baseKwh = Math.round(bill / 30 / 9);
+      const history = DAYS.map((d, i) => ({ day: d, kwh: baseKwh + [30, 25, 20, 15, 10, 5, 0][i] }));
+
+      const building = {
+        id: 'b' + Date.now(),
+        name: name,
+        city: city,
+        sizeSqft: size,
+        monthlyBill: bill,
+        history: history,
+        savingsToday: 0,
+        totalSaved: 0,
+        lastApply: null,
+        weather: null,
+        alerts: [{
+          time: 'Just now',
+          text: '🏢 "' + name + '" added. This building starts with an estimated weekly pattern from its bill.'
+        }]
+      };
+
+      store.buildings.push(building);
+      store.activeId = building.id;
+      saveStore(store);
+      document.getElementById('addBuildingForm').classList.add('hidden');
+      document.getElementById('nbName').value = '';
+      document.getElementById('nbCity').value = '';
+      msg.textContent = '';
+      renderAll();
+    });
+
+    // ---- Scoreboard ----
+    const energyNow = document.getElementById('energyNow');
+    const savingsToday = document.getElementById('savingsToday');
+    const statusBadge = document.getElementById('statusBadge');
+    const statusNote = document.getElementById('statusNote');
+
+    function updateScoreboard() {
+      const b = activeBuilding();
+      document.getElementById('buildingNameLabel').textContent = b.name;
+      const last = b.history[b.history.length - 1];
+      const base = last ? last.kwh / 24 : 15;
+      const now = (base * (0.85 + Math.random() * 0.3)).toFixed(1);
+      energyNow.textContent = now + ' kW';
+
+      const saved = (Math.random() * 2 + b.savingsToday).toFixed(1);
+      savingsToday.textContent = '₹' + saved + '/day';
+
+      const applying = b.lastApply && (Date.now() - b.lastApply < 15000);
+      if (applying) {
+        statusBadge.textContent = '🟢 Smart cooling';
+        statusBadge.className = 'status-badge green';
+        statusNote.textContent = 'Applied! Energy is dropping.';
+      } else if (now > base * 1.1) {
+        statusBadge.textContent = '🔴 Wasting power';
+        statusBadge.className = 'status-badge red';
+        statusNote.textContent = 'Cooling is running above what this building needs.';
+      } else {
+        statusBadge.textContent = '🟢 Smart cooling';
+        statusBadge.className = 'status-badge green';
+        statusNote.textContent = 'Running near normal levels.';
+      }
+    }
+
+    // ---- Weekly bar chart ----
+    function drawChart() {
+      const chart = document.getElementById('barChart');
+      const b = activeBuilding();
+      chart.innerHTML = '';
+      const max = Math.max(...b.history.map(h => h.kwh));
+      b.history.forEach(h => {
+        const col = document.createElement('div');
+        col.className = 'bar-col';
+        const bar = document.createElement('div');
+        bar.className = 'bar';
+        bar.style.height = (h.kwh / max * 100) + '%';
+        bar.title = h.day + ': ' + h.kwh + ' kWh';
+        const label = document.createElement('div');
+        label.className = 'bar-label';
+        label.textContent = h.day;
+        col.appendChild(bar);
+        col.appendChild(label);
+        chart.appendChild(col);
+      });
+    }
+
+    // ---- Bill & estimate ----
+    const estimateText = document.getElementById('estimateText');
+
+    function updateEstimate() {
+      const b = activeBuilding();
+      const bill = Number(document.getElementById('billInput').value) || 0;
+      const size = Number(document.getElementById('sizeInput').value) || 0;
+      b.monthlyBill = bill;
+      b.sizeSqft = size;
+      saveStore(store);
+      const coolingShare = bill * 0.30;
+      const est = Math.round(coolingShare * 0.25);
+      estimateText.textContent = 'Estimated savings: ₹' + est.toLocaleString('en-IN') + '/month (' +
+        (bill > 0 ? Math.round(est / bill * 100) : 0) + '% of your bill) — estimate.';
+    }
+
+    // ---- The big Apply button ----
+    const applyMsg = document.getElementById('applyMsg');
+
+    document.getElementById('btnApply').addEventListener('click', () => {
+      const b = activeBuilding();
+      b.lastApply = Date.now();
+      b.savingsToday += (5 + Math.random() * 8);
+      b.totalSaved += 150 + Math.floor(Math.random() * 200);
+      const todayLabel = DAYS[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1];
+      const today = b.history[b.history.length - 1];
+      today.kwh = Math.max(120, Math.round(today.kwh * 0.94));
+      today.day = todayLabel;
+      saveStore(store);
+      applyMsg.textContent = '✅ Applied! The next bar just dropped — keep applying each week.';
+      applyMsg.style.color = '#1b7f3a';
+      renderAll();
+    });
+
+    // ---- Alerts ----
+    function drawAlerts() {
+      const list = document.getElementById('alertList');
+      const b = activeBuilding();
+      list.innerHTML = '';
+      b.alerts.forEach(a => {
+        const li = document.createElement('li');
+        li.textContent = a.time + ' — ' + a.text;
+        list.appendChild(li);
+      });
+    }
+
+    // ---- Live weather (Open-Meteo — free, no key, no card) ----
+    const WMO_CODES = {
+      0: ['☀️', 'Clear sky'],
+      1: ['🌤️', 'Mostly clear'],
+      2: ['⛅', 'Partly cloudy'],
+      3: ['☁️', 'Cloudy'],
+      45: ['🌫️', 'Fog'], 48: ['🌫️', 'Fog'],
+      51: ['🌦️', 'Light drizzle'], 53: ['🌦️', 'Drizzle'], 55: ['🌧️', 'Heavy drizzle'],
+      61: ['🌧️', 'Light rain'], 63: ['🌧️', 'Rain'], 65: ['🌧️', 'Heavy rain'],
+      71: ['🌨️', 'Light snow'], 73: ['🌨️', 'Snow'], 75: ['❄️', 'Heavy snow'],
+      80: ['🌦️', 'Light showers'], 81: ['🌧️', 'Showers'], 82: ['🌧️', 'Heavy showers'],
+      95: ['⛈️', 'Thunderstorm'], 96: ['⛈️', 'Storm with hail'], 99: ['⛈️', 'Severe storm']
+    };
+    function wmo(code) { return WMO_CODES[code] || ['🌡️', 'Mixed']; }
+
+    function shortDay(isoDate) {
+      return new Date(isoDate + 'T00:00:00').toLocaleDateString('en', { weekday: 'short' });
+    }
+
+    async function loadWeather() {
+      const b = activeBuilding();
+      document.getElementById('weatherCity').textContent = b.city;
+      const cache = b.weather;
+      if (cache && Date.now() - cache.ts < 30 * 60 * 1000) { renderWeather(cache); return; }
+      document.getElementById('weatherMsg').textContent = 'Fetching the forecast…';
+      document.getElementById('weatherBody').innerHTML = '';
+      document.getElementById('weatherSuggestion').textContent = '';
+      try {
+        const geo = await fetch('https://geocoding-api.open-meteo.com/v1/search?name=' +
+          encodeURIComponent(b.city) + '&count=1&language=en').then(r => r.json());
+        if (!geo.results || !geo.results.length) throw new Error('City not found');
+        const g = geo.results[0];
+        const fc = await fetch('https://api.open-meteo.com/v1/forecast?latitude=' + g.latitude +
+          '&longitude=' + g.longitude +
+          '&current=temperature_2m,weather_code' +
+          '&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=auto&forecast_days=5')
+          .then(r => r.json());
+        const w = {
+          ts: Date.now(),
+          city: b.city,
+          temp: Math.round(fc.current.temperature_2m),
+          code: fc.current.weather_code,
+          daily: fc.daily.time.map((t, i) => ({
+            day: shortDay(t),
+            hi: Math.round(fc.daily.temperature_2m_max[i]),
+            lo: Math.round(fc.daily.temperature_2m_min[i]),
+            code: fc.daily.weather_code[i]
+          }))
+        };
+        b.weather = w;
+        saveStore(store);
+        renderWeather(w);
+      } catch (err) {
+        renderWeather(null);
+      }
+    }
+
+    function renderWeather(w) {
+      const body = document.getElementById('weatherBody');
+      const sug = document.getElementById('weatherSuggestion');
+      if (!w) {
+        document.getElementById('weatherMsg').textContent = 'Weather unavailable right now — check your internet connection.';
+        sug.textContent = '';
+        return;
+      }
+      const b = activeBuilding();
+      const cur = wmo(w.code);
+      const tonightsLow = w.daily[0].lo;
+      let html = '<div class="weather-now"><span class="weather-icon">' + cur[0] + '</span>' +
+        '<span class="weather-temp">' + w.temp + '°C</span>' +
+        '<span class="weather-desc">' + cur[1] + '</span></div>';
+      html += '<div class="weather-days">';
+      w.daily.forEach(d => {
+        const c = wmo(d.code);
+        html += '<div class="weather-day"><span class="wd-name">' + d.day + '</span>' +
+          '<span class="wd-icon">' + c[0] + '</span>' +
+          '<span class="wd-temp">' + d.hi + '° / ' + d.lo + '°</span></div>';
+      });
+      html += '</div>';
+      body.innerHTML = html;
+
+      if (tonightsLow <= 24) {
+        const est = Math.round(b.monthlyBill * 0.011);
+        sug.textContent = '🌙 Cool night ahead (' + tonightsLow + '°C) — easing off cooling overnight could save about ₹' +
+          est.toLocaleString('en-IN') + '/month (estimate).';
+      } else if (tonightsLow >= 30) {
+        sug.textContent = '🔥 Hot night ahead (' + tonightsLow + '°C) — cooling will work hard tonight; use the Apply button only if comfortable.';
+      } else {
+        sug.textContent = '🌡️ ' + tonightsLow + '°C tonight — normal cooling levels should be fine.';
+      }
+    }
+
+    // ---- Everything ----
+    function renderAll() {
+      const b = activeBuilding();
+      document.getElementById('billInput').value = b.monthlyBill;
+      document.getElementById('sizeInput').value = b.sizeSqft;
+      drawSwitcher();
+      updateScoreboard();
+      drawChart();
+      updateEstimate();
+      drawAlerts();
+      loadWeather();
+    }
+
+    document.getElementById('btnLogout').addEventListener('click', () => {
+      localStorage.removeItem('cb_session');
+      window.location.href = 'index.html';
+    });
+
+    renderAll();
+    setInterval(updateScoreboard, 3000);
+  </script>
+</body>
+</html>

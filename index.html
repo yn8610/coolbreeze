@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CoolBreeze — Log in</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-page">
+  <div class="auth-box">
+    <div class="logo">❄️ CoolBreeze</div>
+    <p class="tagline">Smart cooling for buildings &amp; data centres</p>
+
+    <div class="tabs">
+      <button id="tabLogin" class="tab active">Log in</button>
+      <button id="tabSignup" class="tab">Create account</button>
+    </div>
+
+    <div id="loginForm">
+      <label>Username</label>
+      <input id="loginUser" type="text" placeholder="e.g. sunita" autocomplete="username">
+      <label>Password</label>
+      <input id="loginPass" type="password" placeholder="Your password" autocomplete="current-password">
+      <button id="btnLogin" class="btn-primary">Log in</button>
+      <p id="loginMsg" class="msg"></p>
+    </div>
+
+    <div id="signupForm" class="hidden">
+      <label>Your name</label>
+      <input id="signupName" type="text" placeholder="e.g. Sunita Sharma">
+      <label>Username</label>
+      <input id="signupUser" type="text" placeholder="e.g. sunita" autocomplete="username">
+      <label>Password</label>
+      <input id="signupPass" type="password" placeholder="Choose a password" autocomplete="new-password">
+      <button id="btnSignup" class="btn-primary">Create account</button>
+      <p id="signupMsg" class="msg"></p>
+    </div>
+
+    <p class="note">Your data is saved in your browser for now — free to try, no card needed.</p>
+  </div>
+
+  <script>
+    // This page handles logging in and creating accounts.
+    // Accounts are stored in the browser (localStorage), not on a server — for now.
+
+    const tabLogin = document.getElementById('tabLogin');
+    const tabSignup = document.getElementById('tabSignup');
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+
+    tabLogin.addEventListener('click', () => {
+      tabLogin.classList.add('active');
+      tabSignup.classList.remove('active');
+      loginForm.classList.remove('hidden');
+      signupForm.classList.add('hidden');
+    });
+
+    tabSignup.addEventListener('click', () => {
+      tabSignup.classList.add('active');
+      tabLogin.classList.remove('active');
+      signupForm.classList.remove('hidden');
+      loginForm.classList.add('hidden');
+    });
+
+    function showMsg(el, text, ok) {
+      el.textContent = text;
+      el.style.color = ok ? '#1b7f3a' : '#c0392b';
+    }
+
+    // Create an account
+    document.getElementById('btnSignup').addEventListener('click', () => {
+      const name = document.getElementById('signupName').value.trim();
+      const user = document.getElementById('signupUser').value.trim();
+      const pass = document.getElementById('signupPass').value;
+
+      if (!name || !user || !pass) {
+        return showMsg(document.getElementById('signupMsg'), 'Please fill in all fields.', false);
+      }
+      if (pass.length < 4) {
+        return showMsg(document.getElementById('signupMsg'), 'Password must be at least 4 characters.', false);
+      }
+
+      const users = JSON.parse(localStorage.getItem('cb_users') || '{}');
+      if (users[user]) {
+        return showMsg(document.getElementById('signupMsg'), 'That username is already taken — try another.', false);
+      }
+
+      users[user] = { name: name, pass: pass, createdAt: new Date().toISOString() };
+      localStorage.setItem('cb_users', JSON.stringify(users));
+
+      // Every new account gets a demo building with sample data.
+      startDemoBuilding(user, name);
+      localStorage.setItem('cb_session', user);
+
+      showMsg(document.getElementById('signupMsg'), 'Account created! Opening your dashboard…', true);
+      setTimeout(() => { window.location.href = 'dashboard.html'; }, 700);
+    });
+
+    // Log in to an existing account
+    document.getElementById('btnLogin').addEventListener('click', () => {
+      const user = document.getElementById('loginUser').value.trim();
+      const pass = document.getElementById('loginPass').value;
+      const users = JSON.parse(localStorage.getItem('cb_users') || '{}');
+
+      if (!users[user] || users[user].pass !== pass) {
+        return showMsg(document.getElementById('loginMsg'), 'Wrong username or password.', false);
+      }
+
+      localStorage.setItem('cb_session', user);
+      showMsg(document.getElementById('loginMsg'), 'Welcome back! Opening dashboard…', true);
+      setTimeout(() => { window.location.href = 'dashboard.html'; }, 700);
+    });
+
+    // Fill the demo building with realistic sample data: energy history,
+    // estimated savings, and alert messages.
+    function startDemoBuilding(user, name) {
+      const history = []; // one item per day: { day: 'Mon', kwh: 380 }
+      const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      const values = [420, 410, 395, 380, 360, 340, 325];
+      for (let i = 0; i < 7; i++) {
+        history.push({ day: labels[i], kwh: values[i] });
+      }
+
+      localStorage.setItem('cb_' + user, JSON.stringify({
+        buildings: [{
+          id: 'demo',
+          name: name + "'s Demo Building",
+          city: 'Mumbai',
+          sizeSqft: 25000,
+          monthlyBill: 450000,
+          history: history,
+          savingsToday: 12,
+          totalSaved: 184000,
+          lastApply: null,
+          weather: null,
+          alerts: [
+            { time: 'Today 9:05 am', text: 'Cooling ran all night at full power — we suggest reducing from 11 pm. Estimated saving: ₹9,500/month.' },
+            { time: 'Yesterday 4:30 pm', text: 'Your building uses 18% more cooling energy than similar buildings (estimate).' },
+            { time: 'Mon 10:12 am', text: 'Welcome! You can apply suggestions with one tap — try the big button below.' }
+          ]
+        }],
+        activeId: 'demo'
+      }));
+    }
+  </script>
+</body>
+</html>
