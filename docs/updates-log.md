@@ -2,6 +2,15 @@
 
 Every change, in date order. Newest at the top.
 
+## 2026-08-12 — Version 3.1: weather auto-refresh while the page is open
+
+- The dashboard now **auto-checks the weather every 10 minutes even while
+  the page stays open** (before, it only fetched on load).
+- Shows "Last updated" time + "next auto-check in about X min", ticking
+  along every 20 seconds so you always know it's alive.
+- Why not every second? Real weather stations only publish new measurements
+  every 15 minutes — so 10-minute checks always get the freshest data.
+
 ## 2026-08-12 — Version 3: weather fixes + all Indian cities
 
 - **City drop-down:** the building form and the weather card now use a

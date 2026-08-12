@@ -30,7 +30,7 @@ making the building uncomfortably hot.
 | How savings are calculated | Simple formula using bill amount + building size, compared to similar buildings, clearly labeled "estimate"; replaced by real measurements when live data arrives | ✅ Decided |
 | Success goal | Log in, see a demo building's energy + savings, click a button and watch the bill go down | ✅ Decided |
 | Tech plan (builder's choice) | Plain website (HTML/CSS/JS), no installs, data saved in the browser for now, free hosting later | ✅ Decided |
-| Live weather | Connects to Open-Meteo (free weather service, no key or card) — current temperature + 5-day forecast, from a drop-down of 138+ tested Indian cities; updates instantly on city change, auto-refreshes every 10 minutes, manual refresh button | ✅ Decided |
+| Live weather | Connects to Open-Meteo (free weather service, no key or card) — current temperature + 5-day forecast, from a drop-down of 138+ tested Indian cities; updates instantly on city change, auto-refreshes every 10 minutes even while the page is open (real weather data changes at most every 15 minutes), manual refresh button | ✅ Decided |
 | Multiple buildings | Owners can add many buildings (name, city, size, monthly bill) and switch between them; each building keeps its own energy history, savings and alerts | ✅ Decided |
 | Publishing | Live on GitHub Pages (free) at https://yn8610.github.io/coolbreeze/ — edits are uploaded automatically, link never changes | ✅ Decided |
 

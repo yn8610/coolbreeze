@@ -519,6 +519,7 @@
       html += '</div>';
       body.innerHTML = html;
       updated.textContent = 'Last updated: ' + clockTime(w.ts) + '. Auto-refreshes every 10 minutes.';
+      updateNextCheck();
 
       if (tonightsLow <= 24) {
         const est = Math.round(b.monthlyBill * 0.011);
@@ -544,6 +545,15 @@
       loadWeather();
     }
 
+    // Show when the next automatic weather check happens.
+    function updateNextCheck() {
+      const b = activeBuilding();
+      const el = document.getElementById('weatherUpdated');
+      if (!b.weather) return;
+      const mins = Math.max(0, 10 - Math.floor((Date.now() - b.weather.ts) / 60000));
+      el.textContent = 'Last updated: ' + clockTime(b.weather.ts) + ' · next auto-check in about ' + mins + ' min';
+    }
+
     document.getElementById('btnLogout').addEventListener('click', () => {
       localStorage.removeItem('cb_session');
       window.location.href = 'index.html';
@@ -551,6 +561,10 @@
 
     renderAll();
     setInterval(updateScoreboard, 3000);
+    // Real weather measurements update every 15 minutes at the source,
+    // so we auto-check every 10 minutes even while the page is open.
+    setInterval(() => { loadWeather(true); }, 10 * 60 * 1000);
+    setInterval(updateNextCheck, 20000);
   </script>
 </body>
 </html>
