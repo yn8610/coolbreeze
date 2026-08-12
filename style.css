@@ -49,14 +49,15 @@ body {
 .tab.active { background: #0b3d66; color: #fff; border-color: #0b3d66; }
 
 label { display: block; font-size: 13px; font-weight: 600; margin: 10px 0 4px; color: #3c4c5c; }
-input {
+input, select {
   width: 100%;
   padding: 10px;
   border: 1px solid #cfd9e2;
   border-radius: 8px;
   font-size: 15px;
+  background: #fff;
 }
-input:focus { outline: 2px solid #1273b8; border-color: transparent; }
+input:focus, select:focus { outline: 2px solid #1273b8; border-color: transparent; }
 
 .btn-primary {
   width: 100%;
@@ -219,6 +220,20 @@ main {
 .building-add:hover { background: #e8f3fb; }
 
 /* ---------- Weather card ---------- */
+.weather-city-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+.weather-city-row label { margin: 0; font-size: 13px; }
+.weather-city-row select { width: auto; max-width: 220px; padding: 8px; }
+.btn-outline {
+  padding: 8px 12px;
+  border: 1px solid #1273b8;
+  color: #1273b8;
+  background: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+}
+.btn-outline:hover { background: #e8f3fb; }
 .weather-now { display: flex; align-items: center; gap: 12px; margin: 12px 0 14px; }
 .weather-icon { font-size: 34px; }
 .weather-temp { font-size: 30px; font-weight: 800; color: #0b3d66; }

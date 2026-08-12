@@ -2,6 +2,18 @@
 
 Every change, in date order. Newest at the top.
 
+## 2026-08-12 — Version 3: weather fixes + all Indian cities
+
+- **City drop-down:** the building form and the weather card now use a
+  drop-down of 138+ Indian cities (grouped by region), so weather always
+  matches a real city.
+- **Weather updates instantly** when you change a city, plus a
+  "↻ Refresh weather" button. Auto-refresh every 10 minutes instead of 30.
+- Fixed a bug where switching buildings quickly could show the wrong city's
+  weather (the fetch now checks which building is active before showing).
+- Every city name was tested against the free weather service — two needed
+  different spellings (Shivamogga, Davangere).
+
 ## 2026-08-12 — Published to the internet (GitHub Pages)
 
 - The app is now live and free at **https://yn8610.github.io/coolbreeze/** .

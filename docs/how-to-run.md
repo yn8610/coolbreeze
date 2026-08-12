@@ -33,11 +33,14 @@ No installs. No credit card. Everything is free.
 
 ## Things to try in the dashboard
 
-- **Add a building** with the "＋ Add building" button — give it a city, and
-  it fetches that city's live weather automatically.
+- **Add a building** with the "＋ Add building" button — pick any city from
+  the drop-down (138+ Indian cities) and its live weather loads instantly.
+- **Change the weather instantly:** in the Live weather card, pick a
+  different city from the drop-down — the forecast updates right away.
+  There's also a "↻ Refresh weather" button if you want a fresh check.
 - **Switch buildings** by clicking the chips at the top.
 - **Weather:** needs an internet connection. If it can't load, you'll see a
-  friendly message — the rest of the app still works.
+  friendly message — tap "↻ Refresh weather" to try again.
 
 ## Important: where data lives (for now)
 

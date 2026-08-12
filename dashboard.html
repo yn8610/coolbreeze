@@ -27,8 +27,8 @@
             <input id="nbName" type="text" placeholder="e.g. Sunita Tower">
           </div>
           <div>
-            <label>City</label>
-            <input id="nbCity" type="text" placeholder="e.g. Chennai">
+            <label for="nbCity">City (pick from the list)</label>
+            <select id="nbCity"></select>
           </div>
         </div>
         <div class="row">
@@ -67,11 +67,17 @@
 
     <!-- Live weather -->
     <section class="card">
-      <p class="card-label">Live weather — <span id="weatherCity">…</span></p>
+      <p class="card-label">Live weather</p>
+      <div class="weather-city-row">
+        <label for="citySelect">Building city:</label>
+        <select id="citySelect"></select>
+        <button id="btnRefreshWeather" class="btn-outline">↻ Refresh weather</button>
+      </div>
       <div id="weatherBody">
         <p id="weatherMsg" class="card-sub">Fetching the forecast…</p>
       </div>
       <p id="weatherSuggestion" class="weather-suggestion"></p>
+      <p id="weatherUpdated" class="tiny"></p>
     </section>
 
     <!-- Weekly graph -->
@@ -114,6 +120,60 @@
 
     const users = JSON.parse(localStorage.getItem('cb_users') || '{}');
     const profile = users[user] || { name: user };
+
+    // ---- All the Indian cities we support (grouped by region) ----
+    // Every name here was tested against the free weather service.
+    const CITIES = {
+      'North India': ['Delhi', 'Chandigarh', 'Gurugram', 'Noida', 'Faridabad', 'Ghaziabad',
+        'Lucknow', 'Kanpur', 'Agra', 'Varanasi', 'Prayagraj', 'Meerut', 'Mathura', 'Bareilly',
+        'Jhansi', 'Gorakhpur', 'Moradabad', 'Ludhiana', 'Amritsar', 'Jalandhar', 'Patiala',
+        'Bathinda', 'Dehradun', 'Haridwar', 'Rishikesh', 'Shimla', 'Srinagar', 'Jammu',
+        'Jaipur', 'Jodhpur', 'Udaipur', 'Kota', 'Ajmer', 'Alwar', 'Bikaner', 'Sikar', 'Leh'],
+      'West India': ['Mumbai', 'Pune', 'Thane', 'Nagpur', 'Nashik', 'Aurangabad', 'Kolhapur',
+        'Solapur', 'Amravati', 'Ahmedabad', 'Surat', 'Vadodara', 'Rajkot', 'Gandhinagar',
+        'Bhavnagar', 'Jamnagar', 'Indore', 'Bhopal', 'Gwalior', 'Jabalpur', 'Ujjain',
+        'Raipur', 'Bilaspur', 'Panaji', 'Vasco da Gama', 'Daman'],
+      'South India': ['Bengaluru', 'Mysuru', 'Hubballi', 'Mangaluru', 'Belagavi', 'Shivamogga',
+        'Davangere', 'Tumakuru', 'Ballari', 'Chennai', 'Coimbatore', 'Madurai',
+        'Tiruchirappalli', 'Salem', 'Tirunelveli', 'Vellore', 'Erode', 'Thoothukudi',
+        'Hyderabad', 'Warangal', 'Vijayawada', 'Visakhapatnam', 'Guntur', 'Nellore',
+        'Kakinada', 'Rajahmundry', 'Tirupati', 'Thiruvananthapuram', 'Kochi', 'Kozhikode',
+        'Thrissur', 'Kollam', 'Kannur', 'Kottayam', 'Karur', 'Nagercoil'],
+      'East India': ['Kolkata', 'Howrah', 'Durgapur', 'Asansol', 'Siliguri', 'Patna', 'Gaya',
+        'Bhagalpur', 'Muzaffarpur', 'Purnia', 'Ranchi', 'Jamshedpur', 'Dhanbad', 'Bokaro',
+        'Bhubaneswar', 'Cuttack', 'Rourkela', 'Sambalpur', 'Berhampur'],
+      'Northeast India': ['Guwahati', 'Silchar', 'Dibrugarh', 'Jorhat', 'Tezpur', 'Imphal',
+        'Agartala', 'Aizawl', 'Shillong', 'Kohima', 'Itanagar', 'Gangtok', 'Dimapur',
+        'Port Blair', 'Kavaratti', 'Diu']
+    };
+    function allCities() { return Object.values(CITIES).flat(); }
+
+    // Fill any drop-down list with all the cities.
+    function fillCitySelect(select, selected) {
+      select.innerHTML = '';
+      Object.keys(CITIES).forEach(region => {
+        const group = document.createElement('optgroup');
+        group.label = region;
+        CITIES[region].forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c;
+          opt.textContent = c;
+          group.appendChild(opt);
+        });
+        select.appendChild(group);
+      });
+      if (selected && allCities().includes(selected)) {
+        select.value = selected;
+      } else {
+        // City not in our list (old account) — show a "pick one" option.
+        const ph = document.createElement('option');
+        ph.value = '';
+        ph.textContent = '— pick a city —';
+        ph.disabled = true;
+        ph.selected = true;
+        select.prepend(ph);
+      }
+    }
 
     // ---- Data: a list of buildings for this owner ----
     function loadStore() {
@@ -191,16 +251,17 @@
 
     // ---- Add a building ----
     const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    fillCitySelect(document.getElementById('nbCity'), 'Mumbai');
 
     document.getElementById('btnAddBuilding').addEventListener('click', () => {
       const name = document.getElementById('nbName').value.trim();
-      const city = document.getElementById('nbCity').value.trim();
+      const city = document.getElementById('nbCity').value;
       const bill = Number(document.getElementById('nbBill').value) || 0;
       const size = Number(document.getElementById('nbSize').value) || 0;
       const msg = document.getElementById('addMsg');
 
       if (!name || !city || bill <= 0 || size <= 0) {
-        msg.textContent = 'Please fill in name, city, bill and size.';
+        msg.textContent = 'Please fill in name, pick a city, bill and size.';
         msg.style.color = '#c0392b';
         return;
       }
@@ -223,7 +284,7 @@
         weather: null,
         alerts: [{
           time: 'Just now',
-          text: '🏢 "' + name + '" added. This building starts with an estimated weekly pattern from its bill.'
+          text: '🏢 "' + name + '" added in ' + city + '. It starts with an estimated weekly pattern from its bill.'
         }]
       };
 
@@ -232,7 +293,6 @@
       saveStore(store);
       document.getElementById('addBuildingForm').classList.add('hidden');
       document.getElementById('nbName').value = '';
-      document.getElementById('nbCity').value = '';
       msg.textContent = '';
       renderAll();
     });
@@ -357,17 +417,51 @@
       return new Date(isoDate + 'T00:00:00').toLocaleDateString('en', { weekday: 'short' });
     }
 
-    async function loadWeather() {
+    function clockTime(ts) {
+      return new Date(ts).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    const citySelect = document.getElementById('citySelect');
+    const refreshBtn = document.getElementById('btnRefreshWeather');
+
+    // Change city → update weather instantly.
+    citySelect.addEventListener('change', () => {
       const b = activeBuilding();
-      document.getElementById('weatherCity').textContent = b.city;
+      if (!citySelect.value || citySelect.value === b.city) return;
+      b.city = citySelect.value;
+      b.weather = null;               // clear old cache so we refetch
+      saveStore(store);
+      loadWeather(true);
+    });
+
+    // Manual refresh button.
+    refreshBtn.addEventListener('click', () => {
+      const b = activeBuilding();
+      b.weather = null;
+      saveStore(store);
+      loadWeather(true);
+    });
+
+    async function loadWeather(force) {
+      const b = activeBuilding();
+      fillCitySelect(citySelect, b.city);
+      document.getElementById('weatherUpdated').textContent = '';
+
       const cache = b.weather;
-      if (cache && Date.now() - cache.ts < 30 * 60 * 1000) { renderWeather(cache); return; }
-      document.getElementById('weatherMsg').textContent = 'Fetching the forecast…';
+      // Auto-refresh: use a 10-minute cache, but force-refresh when asked.
+      if (!force && cache && Date.now() - cache.ts < 10 * 60 * 1000) {
+        renderWeather(cache);
+        return;
+      }
+
+      document.getElementById('weatherMsg').textContent = 'Fetching live forecast for ' + b.city + '…';
       document.getElementById('weatherBody').innerHTML = '';
       document.getElementById('weatherSuggestion').textContent = '';
+
       try {
         const geo = await fetch('https://geocoding-api.open-meteo.com/v1/search?name=' +
-          encodeURIComponent(b.city) + '&count=1&language=en').then(r => r.json());
+          encodeURIComponent(b.city) + '&count=1&countryCode=IN&language=en').then(r => r.json());
+        if (store.activeId !== b.id) return;   // user switched buildings mid-fetch
         if (!geo.results || !geo.results.length) throw new Error('City not found');
         const g = geo.results[0];
         const fc = await fetch('https://api.open-meteo.com/v1/forecast?latitude=' + g.latitude +
@@ -375,6 +469,8 @@
           '&current=temperature_2m,weather_code' +
           '&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=auto&forecast_days=5')
           .then(r => r.json());
+        if (store.activeId !== b.id) return;
+
         const w = {
           ts: Date.now(),
           city: b.city,
@@ -391,6 +487,7 @@
         saveStore(store);
         renderWeather(w);
       } catch (err) {
+        if (store.activeId !== b.id) return;
         renderWeather(null);
       }
     }
@@ -398,9 +495,12 @@
     function renderWeather(w) {
       const body = document.getElementById('weatherBody');
       const sug = document.getElementById('weatherSuggestion');
+      const updated = document.getElementById('weatherUpdated');
       if (!w) {
-        document.getElementById('weatherMsg').textContent = 'Weather unavailable right now — check your internet connection.';
+        document.getElementById('weatherMsg').textContent =
+          'Could not reach the weather service — check your internet and tap "↻ Refresh weather" to try again.';
         sug.textContent = '';
+        updated.textContent = '';
         return;
       }
       const b = activeBuilding();
@@ -408,7 +508,7 @@
       const tonightsLow = w.daily[0].lo;
       let html = '<div class="weather-now"><span class="weather-icon">' + cur[0] + '</span>' +
         '<span class="weather-temp">' + w.temp + '°C</span>' +
-        '<span class="weather-desc">' + cur[1] + '</span></div>';
+        '<span class="weather-desc">' + cur[1] + ' in ' + w.city + '</span></div>';
       html += '<div class="weather-days">';
       w.daily.forEach(d => {
         const c = wmo(d.code);
@@ -418,6 +518,7 @@
       });
       html += '</div>';
       body.innerHTML = html;
+      updated.textContent = 'Last updated: ' + clockTime(w.ts) + '. Auto-refreshes every 10 minutes.';
 
       if (tonightsLow <= 24) {
         const est = Math.round(b.monthlyBill * 0.011);
