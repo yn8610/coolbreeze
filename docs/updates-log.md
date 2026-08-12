@@ -2,6 +2,14 @@
 
 Every change, in date order. Newest at the top.
 
+## 2026-08-12 — Published to the internet (GitHub Pages)
+
+- The app is now live and free at **https://yn8610.github.io/coolbreeze/** .
+- Created the GitHub account, the `coolbreeze` repository, pushed the code,
+  and switched on GitHub Pages hosting.
+- A "token" (secret code) lets the builder push updates from this computer —
+  it lasts 90 days, then we renew it together.
+
 ## 2026-08-12 — Version 2: live weather + multiple buildings
 
 - **Live weather:** the dashboard now connects to Open-Meteo (a free weather

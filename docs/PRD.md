@@ -32,6 +32,7 @@ making the building uncomfortably hot.
 | Tech plan (builder's choice) | Plain website (HTML/CSS/JS), no installs, data saved in the browser for now, free hosting later | ✅ Decided |
 | Live weather | Connects to Open-Meteo (free weather service, no key or card) — current temperature + 5-day forecast for each building's city, with a "cool night ahead — ease off overnight" suggestion | ✅ Decided |
 | Multiple buildings | Owners can add many buildings (name, city, size, monthly bill) and switch between them; each building keeps its own energy history, savings and alerts | ✅ Decided |
+| Publishing | Live on GitHub Pages (free) at https://yn8610.github.io/coolbreeze/ — edits are uploaded automatically, link never changes | ✅ Decided |
 
 ## Why it must save information
 
