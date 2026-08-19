@@ -117,6 +117,20 @@ for different places:
 The wordmark and text inside the logo come from the owner's artwork and are
 used unedited.
 
+**Ready-to-share PNG copies** live in `brand/png/` (same designs, perfect
+for WhatsApp, email, printing):
+
+| PNG | Size | Best for |
+|---|---|---|
+| `logo-primary.png` | 1600×800, clear background | Light places |
+| `logo-white.png` | 1184×323, clear background | Dark places |
+| `logo-mark.png` / `logo-mark-white.png` | 1184×323, clear background | Pictures on light / dark |
+| `logo-simple.png` | 614×614, clear background | Small stamps, avatars |
+| `instagram-post.png` | 1080×1080 | Feed post, WhatsApp |
+| `instagram-story.png` | 1080×1920 | Story, status |
+| `flyer-a5.png` | 1748×2480 (A5 @ 300dpi) | Print |
+| `poster-a4.png` | 2480×3508 (A4 @ 300dpi) | Print |
+
 ## 6. The website wears the brand too
 
 - Login page: the real logo (black) on the card, tagline underneath.

@@ -2,6 +2,13 @@
 
 Every change, in date order. Newest at the top.
 
+## 2026-08-19 — PNG copies for sharing
+
+- Made ready-to-share PNG copies of everything in `brand/png/`: the logos
+  (clear backgrounds), both Instagram pictures, the flyer and the poster
+  (A5/A4 print quality).
+- Perfect for WhatsApp, email and printing.
+
 ## 2026-08-19 — New logo everywhere
 
 - The owner sent a new designed logo (big fan-swirl "C" + wordmark).
