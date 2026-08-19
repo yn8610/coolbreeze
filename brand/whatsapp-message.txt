@@ -1,0 +1,6 @@
+Hi! 👋 Meet CoolBreeze — the smart cooling dashboard for buildings.
+
+It watches your cooling 24/7 and tells you exactly when to ease off, so the electricity bill drops without the building ever getting hot. Live weather for your city + savings in rupees every day.
+
+Open the free demo building and see what you'd save — 60 seconds, no sign-up:
+yn8610.github.io/coolbreeze

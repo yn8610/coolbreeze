@@ -33,6 +33,8 @@ making the building uncomfortably hot.
 | Live weather | Connects to Open-Meteo (free weather service, no key or card) — current temperature + 5-day forecast, from a drop-down of 138+ tested Indian cities; updates instantly on city change, auto-refreshes every 10 minutes even while the page is open (real weather data changes at most every 15 minutes), manual refresh button | ✅ Decided |
 | Multiple buildings | Owners can add many buildings (name, city, size, monthly bill) and switch between them; each building keeps its own energy history, savings and alerts | ✅ Decided |
 | Publishing | Live on GitHub Pages (free) at https://yn8610.github.io/coolbreeze/ — edits are uploaded automatically, link never changes | ✅ Decided |
+| Brand name | CoolBreeze (kept after a name-search) | ✅ Decided |
+| Brand look & voice | Greens + blacks, Mamaearth-style: clean, natural, calm, friendly expert voice; tagline "Less electricity · Never less comfort"; full kit in docs/brand-guide.md | ✅ Decided |
 
 ## Why it must save information
 
@@ -47,6 +49,8 @@ making the building uncomfortably hot.
 - [How to Run the App](how-to-run.md) — how to open and share the app
 - [Glossary](glossary.md) — every term in one short line
 - [Updates Log](updates-log.md) — everything we change, in date order
+- [Brand Guide](brand-guide.md) — the look, voice, colours, marketing words and pictures
+- [Brand Guide](brand-guide.md) — the look, voice, colours, marketing words and pictures
 
 ## How to use this document
 

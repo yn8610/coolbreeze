@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="1754" viewBox="0 0 1240 1754">
+  <title>CoolBreeze poster — A4 print 210 x 297 mm</title>
+  <rect width="1240" height="1754" fill="#F4FAF6"/>
+
+  <!-- Top band -->
+  <rect width="1240" height="34" fill="#0E3B2E"/>
+  <rect y="34" width="1240" height="26" fill="#3DA35D"/>
+
+  <!-- Logo -->
+  <text x="80" y="180" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="84" font-weight="800" fill="#0E3B2E">Cool</text>
+  <text x="240" y="180" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="84" font-weight="700" fill="#1E6F50">Breeze</text>
+  <text x="680" y="180" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="30" font-weight="600" fill="#4A6658" text-anchor="end">Smart cooling · Indian buildings &amp; data centres</text>
+
+  <!-- Headline -->
+  <text x="80" y="330" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="64" font-weight="800" fill="#0E3B2E">IS YOUR COOLING WORKING WHEN</text>
+  <text x="80" y="404" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="64" font-weight="800" fill="#0E3B2E">IT SHOULDN’T BE?</text>
+  <text x="84" y="470" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="34" font-weight="600" fill="#131313">CoolBreeze watches it around the clock, links live weather to your cooling,</text>
+  <text x="84" y="514" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="34" font-weight="600" fill="#131313">and tells you exactly when to ease off — your bill drops, the building stays cool.</text>
+
+  <!-- Bars: before and after one tap -->
+  <g transform="translate(200,640)">
+    <rect x="0" y="30" width="96" height="430" rx="18" fill="#1E6F50"/>
+    <rect x="120" y="30" width="96" height="400" rx="18" fill="#1E6F50"/>
+    <rect x="240" y="30" width="96" height="370" rx="18" fill="#1E6F50"/>
+    <rect x="360" y="30" width="96" height="330" rx="18" fill="#1E6F50"/>
+    <rect x="480" y="30" width="96" height="290" rx="18" fill="#3DA35D"/>
+    <rect x="600" y="30" width="96" height="235" rx="18" fill="#3DA35D"/>
+    <rect x="720" y="30" width="96" height="170" rx="18" fill="#3DA35D"/>
+    <rect x="-10" y="460" width="870" height="14" rx="7" fill="#A8CBB8"/>
+    <text x="0" y="530" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="30" font-weight="700" fill="#4A6658">Before</text>
+    <text x="720" y="530" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="30" font-weight="700" fill="#1E6F50" text-anchor="end">After one tap</text>
+  </g>
+
+  <!-- Stat chips -->
+  <g>
+    <rect x="200" y="1280" width="860" height="120" rx="32" fill="#FFFFFF" stroke="#A8CBB8" stroke-width="4"/>
+    <circle cx="290" cy="1340" r="34" fill="#1E6F50"/>
+    <text x="290" y="1354" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="36" font-weight="800" fill="#FFFFFF" text-anchor="middle">24</text>
+    <text x="360" y="1345" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="34" font-weight="700" fill="#131313">Hour watch</text>
+    <circle cx="640" cy="1340" r="34" fill="#3DA35D"/>
+    <text x="640" y="1356" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="36" font-weight="800" fill="#0E3B2E" text-anchor="middle">1</text>
+    <text x="712" y="1345" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="34" font-weight="700" fill="#131313">Tap to save</text>
+    <circle cx="910" cy="1340" r="34" fill="#0E3B2E"/>
+    <text x="910" y="1356" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="36" font-weight="800" fill="#FFFFFF" text-anchor="middle">0</text>
+    <text x="982" y="1345" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="34" font-weight="700" fill="#131313">Loss of comfort</text>
+  </g>
+
+  <!-- CTA band -->
+  <rect x="80" y="1480" width="1080" height="150" rx="44" fill="#1E6F50"/>
+  <text x="620" y="1548" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="52" font-weight="800" fill="#FFFFFF" text-anchor="middle">TRY THE FREE DEMO BUILDING</text>
+  <text x="620" y="1606" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="30" font-weight="600" fill="#D9EBE0" text-anchor="middle">yn8610.github.io/coolbreeze</text>
+
+  <text x="620" y="1704" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="28" font-weight="600" fill="#4A6658" text-anchor="middle">Less electricity · Never less comfort</text>
+</svg>

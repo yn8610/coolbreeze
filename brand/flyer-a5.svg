@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="874" height="1240" viewBox="0 0 874 1240">
+  <title>CoolBreeze flyer — A5 print 148 x 210 mm</title>
+  <rect width="874" height="1240" fill="#F4FAF6"/>
+  <rect width="874" height="24" fill="#3DA35D"/>
+
+  <!-- Logo text -->
+  <text x="60" y="130" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="58" font-weight="800" fill="#0E3B2E">Cool</text>
+  <text x="158" y="130" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="58" font-weight="700" fill="#1E6F50">Breeze</text>
+
+  <!-- Title -->
+  <text x="60" y="310" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="92" font-weight="800" fill="#0E3B2E">COOL LESS.</text>
+  <text x="60" y="412" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="92" font-weight="800" fill="#0E3B2E">SAVE MORE.</text>
+  <text x="64" y="500" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="34" font-weight="600" fill="#131313">The smart cooling dashboard for Indian</text>
+  <text x="64" y="544" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="34" font-weight="600" fill="#131313">buildings and data centres.</text>
+
+  <!-- Bullets -->
+  <g>
+    <rect x="64" y="640" width="26" height="26" rx="13" fill="#1E6F50"/>
+    <text x="120" y="672" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="38" font-weight="700" fill="#131313">One tap applies the savings</text>
+  </g>
+  <g>
+    <rect x="64" y="740" width="26" height="26" rx="13" fill="#3DA35D"/>
+    <text x="120" y="772" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="38" font-weight="700" fill="#131313">Live weather for your city</text>
+  </g>
+  <g>
+    <rect x="64" y="840" width="26" height="26" rx="13" fill="#0E3B2E"/>
+    <text x="120" y="872" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="38" font-weight="700" fill="#131313">Your savings in rupees, every day</text>
+  </g>
+
+  <!-- CTA -->
+  <rect x="60" y="960" width="754" height="128" rx="40" fill="#1E6F50"/>
+  <text x="437" y="1020" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="44" font-weight="800" fill="#FFFFFF" text-anchor="middle">TRY THE FREE DEMO</text>
+  <text x="437" y="1072" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="30" font-weight="600" fill="#D9EBE0" text-anchor="middle">yn8610.github.io/coolbreeze</text>
+
+  <!-- Footer -->
+  <text x="437" y="1190" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="26" font-weight="600" fill="#4A6658" text-anchor="middle">Less electricity · Never less comfort</text>
+</svg>

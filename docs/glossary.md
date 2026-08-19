@@ -28,3 +28,9 @@ Every term we use, in one short line each. Added to whenever we meet a new word.
 | **Forecast** | The weather predicted for the next days. We show 5 days. |
 | **Geocoding** | Turning a city name (e.g. "Chennai") into map coordinates so we can fetch its weather. |
 | **API** | A way for a website to ask another service (like weather) for data automatically. |
+| **Brand** | The name, look, voice and personality of a product together. |
+| **Logo** | The little picture + name that represents the product everywhere. |
+| **Tagline** | A short slogan; ours is "Less electricity · Never less comfort." |
+| **Palette** | The chosen family of colours a brand always uses. |
+| **SVG** | A picture file that can be resized to any size without going blurry; ours are in the `brand/` folder. |
+| **Favicon** | The tiny icon that appears in the browser tab next to the website name. |

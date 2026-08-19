@@ -2,6 +2,20 @@
 
 Every change, in date order. Newest at the top.
 
+## 2026-08-12 — Brand refresh: greens & blacks (Mamaearth-style)
+
+- Brand journey: name stayed **CoolBreeze**; look and voice redone from
+  scratch in green and black, inspired by Mamaearth.
+- New palette: Deep Forest, Leaf Green, Fresh Mint, Rich Black, Soft White,
+  Misty Sage.
+- New logo (fan symbol + two-tone name + tagline) and a one-colour simple
+  version. Browser tab icon (favicon) now uses the simple logo.
+- Marketing kit created in `brand/`: WhatsApp message, Instagram post
+  (1080×1080), Instagram story (1080×1920), A5 flyer, A4 poster — all built
+  around one action: "Open the free demo building — see what you'd save."
+- Whole website recoloured to match (headers, buttons, bars, cards).
+- `docs/brand-guide.md` written with everything in one place.
+
 ## 2026-08-12 — Version 3.2: visible live weather proof
 
 - Auto-check faster: **every 5 minutes** while the page is open.
