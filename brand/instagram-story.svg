@@ -1,26 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1080" height="1920" viewBox="0 0 1080 1920">
   <title>CoolBreeze Instagram story — full screen 1080x1920</title>
   <defs>
     <linearGradient id="storybg" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#0E3B2E"/>
       <stop offset="1" stop-color="#1E6F50"/>
     </linearGradient>
-    <clipPath id="fanclip3">
-      <circle cx="148" cy="150" r="52"/>
-    </clipPath>
   </defs>
 
   <rect width="1080" height="1920" fill="url(#storybg)"/>
 
-  <!-- Mini logo -->
-  <g clip-path="url(#fanclip3)">
-    <g transform="translate(148,150)">
-      <ellipse cx="0" cy="20" rx="50" ry="17" fill="#FFFFFF" transform="rotate(0)"/>
-      <ellipse cx="0" cy="20" rx="50" ry="17" fill="#FFFFFF" transform="rotate(120)"/>
-      <ellipse cx="0" cy="20" rx="50" ry="17" fill="#FFFFFF" transform="rotate(240)"/>
-    </g>
-  </g>
-  <text x="235" y="175" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="72" font-weight="800" fill="#FFFFFF">CoolBreeze</text>
+  <!-- New logo (white for the dark background) -->
+  <image xlink:href="logo-mark-white.svg" href="logo-mark-white.svg" x="90" y="90" width="470" height="128"/>
 
   <!-- Headline -->
   <text x="90" y="640" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="92" font-weight="800" fill="#FFFFFF">HOW MUCH IS YOUR</text>

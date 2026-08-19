@@ -35,6 +35,7 @@ making the building uncomfortably hot.
 | Publishing | Live on GitHub Pages (free) at https://yn8610.github.io/coolbreeze/ — edits are uploaded automatically, link never changes | ✅ Decided |
 | Brand name | CoolBreeze (kept after a name-search) | ✅ Decided |
 | Brand look & voice | Greens + blacks, Mamaearth-style: clean, natural, calm, friendly expert voice; tagline "Less electricity · Never less comfort"; full kit in docs/brand-guide.md | ✅ Decided |
+| Logo | Owner's designed logo (fan-swirl C + wordmark) used everywhere: login page, header, favicon, marketing pictures — see docs/brand-guide.md | ✅ Decided |
 
 ## Why it must save information
 

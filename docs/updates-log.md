@@ -2,6 +2,16 @@
 
 Every change, in date order. Newest at the top.
 
+## 2026-08-19 — New logo everywhere
+
+- The owner sent a new designed logo (big fan-swirl "C" + wordmark).
+- Made working versions: black (light places), white (dark places),
+  mark-only for pictures, and a green fan-swirl symbol for the browser tab.
+- Logo now shows on: login page, dashboard header, browser tab icon, and all
+  four marketing pictures (post, story, flyer, poster).
+- Logo files live in `brand/`; the owner's original file stays in the
+  project root as the master copy.
+
 ## 2026-08-12 — Brand refresh: greens & blacks (Mamaearth-style)
 
 - Brand journey: name stayed **CoolBreeze**; look and voice redone from

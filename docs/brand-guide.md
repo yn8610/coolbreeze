@@ -101,24 +101,29 @@ All words inside pictures were spelling-checked before saving. ✅
 
 ## 5. Logo
 
+**The logo is the owner's design** (a big fan-swirl "C" with the wordmark and
+a small text line) — used exactly as designed. We made a few versions of it
+for different places:
+
 | File | What it is | When to use |
 |---|---|---|
-| `brand/logo-primary.svg` | Fan symbol + CoolBreeze name + tagline | Websites, flyers, posters, headers |
-| `brand/logo-simple.svg` | Fan symbol only, one colour | Tiny places: favicon, avatar, stamp |
+| `brand/logo-primary.svg` | The full logo, black | Light backgrounds: login page, flyers, posters |
+| `brand/logo-white.svg` | The full logo, white | Dark backgrounds: app header, stories |
+| `brand/logo-mark.svg` | Swirl + wordmark, black | Marketing pictures on light backgrounds |
+| `brand/logo-mark-white.svg` | Swirl + wordmark, white | Marketing pictures on dark backgrounds |
+| `brand/logo-simple.svg` | The fan-swirl symbol alone, green | Browser tab icon (favicon), tiny stamp places |
+| `WhatsApp-Image-...svg` (project root) | The original file you sent | Keep it safe as the master copy |
 
-**Meaning:** the fan = cooling. The fresh-mint dot on the corner = the
-sensor watching the heat. Tagline: "Less electricity · Never less comfort."
-
-**Spelling check:** "CoolBreeze", "BREEZE", "LESS ELECTRICITY · NEVER LESS
-COMFORT" — all correct. ✅
+The wordmark and text inside the logo come from the owner's artwork and are
+used unedited.
 
 ## 6. The website wears the brand too
 
-- Login + dashboard headers: two-tone **Cool** (Deep Forest) **Breeze**
-  (Leaf Green), tagline on the login page.
-- Whole app recoloured: Deep Forest header, Leaf Green buttons and bars,
-  Mint highlights, Soft White backgrounds, Rich Black text.
-- Browser tab icon (favicon): the simple logo.
+- Login page: the real logo (black) on the card, tagline underneath.
+- Dashboard header: the white version of the logo on the deep-green bar.
+- Browser tab icon (favicon): the green fan-swirl symbol.
+- Marketing pictures (post, story, flyer, poster) all use the real logo:
+  the mark in black on light, white on dark.
 - The app itself: `index.html`, `dashboard.html`, `style.css`.
 
 ## 7. Where things live

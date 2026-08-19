@@ -1,11 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="874" height="1240" viewBox="0 0 874 1240">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="874" height="1240" viewBox="0 0 874 1240">
   <title>CoolBreeze flyer — A5 print 148 x 210 mm</title>
   <rect width="874" height="1240" fill="#F4FAF6"/>
   <rect width="874" height="24" fill="#3DA35D"/>
 
-  <!-- Logo text -->
-  <text x="60" y="130" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="58" font-weight="800" fill="#0E3B2E">Cool</text>
-  <text x="158" y="130" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="58" font-weight="700" fill="#1E6F50">Breeze</text>
+  <!-- New logo -->
+  <image xlink:href="logo-mark.svg" href="logo-mark.svg" x="60" y="48" width="430" height="117"/>
 
   <!-- Title -->
   <text x="60" y="310" font-family="'Avenir Next','Nunito','Poppins','Helvetica Neue',sans-serif" font-size="92" font-weight="800" fill="#0E3B2E">COOL LESS.</text>
