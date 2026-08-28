@@ -2,6 +2,13 @@
 
 Every change, in date order. Newest at the top.
 
+## 2026-08-28 — Now live on Vercel too
+
+- The website is now also published on **Vercel** at
+  **https://coolbreeze-olive.vercel.app/** — the main internet link from now on.
+- GitHub Pages (https://yn8610.github.io/coolbreeze/) still works as a backup.
+- Clean links on Vercel: the dashboard is at `/dashboard` (no `.html`).
+
 ## 2026-08-19 — PNG copies for sharing
 
 - Made ready-to-share PNG copies of everything in `brand/png/`: the logos

@@ -4,12 +4,15 @@ Plain-English guide. Updated whenever something changes.
 
 ## The live internet link (published!)
 
-The app is on the free internet at:
+The app is on the free internet TWO ways:
 
-**https://yn8610.github.io/coolbreeze/**
+**Vercel (main):** **https://coolbreeze-olive.vercel.app/**
+**GitHub Pages:** https://yn8610.github.io/coolbreeze/
 
-Anyone with the link can open it and create an account. Changes you ask me to
-make get uploaded automatically — the link stays the same.
+Anyone with either link can open it and create an account. Changes you ask me
+to make get uploaded automatically — the links stay the same.
+On Vercel the pages use clean links (no `.html`), so the dashboard is at
+`/dashboard`.
 
 ## Right now (this week)
 
