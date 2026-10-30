@@ -74,9 +74,8 @@
         <select id="citySelect"></select>
         <button id="btnRefreshWeather" class="btn-outline">↻ Refresh weather</button>
       </div>
-      <div id="weatherBody">
-        <p id="weatherMsg" class="card-sub">Fetching the forecast…</p>
-      </div>
+      <p id="weatherMsg" class="card-sub">Fetching the forecast…</p>
+      <div id="weatherBody"></div>
       <p id="weatherSuggestion" class="weather-suggestion"></p>
       <p id="weatherUpdated" class="tiny"></p>
     </section>
@@ -418,8 +417,60 @@
       return new Date(isoDate + 'T00:00:00').toLocaleDateString('en', { weekday: 'short' });
     }
 
-    function clockTime(ts) {
-      return new Date(ts).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+    // Format the station's local wall-clock time ("2026-10-31T14:30") without
+    // shifting it into the viewer's timezone.
+    function stationTime(iso) {
+      const m = /T(\d{2}):(\d{2})/.exec(iso || '');
+      if (!m) return '';
+      const d = new Date(2000, 0, 1, Number(m[1]), Number(m[2]));
+      return d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function timeAgo(ts) {
+      const s = Math.max(0, Math.round((Date.now() - ts) / 1000));
+      if (s < 3) return 'just now';
+      if (s < 60) return s + 's ago';
+      const m = Math.floor(s / 60);
+      const r = s % 60;
+      return m + 'm ' + (r < 10 ? '0' : '') + r + 's ago';
+    }
+
+    // How often to ask for a fresh reading, and how long a cached one is usable.
+    const CHECK_EVERY_SEC = 60;
+    const CACHE_MAX_AGE_MS = CHECK_EVERY_SEC * 1000;
+
+    // Coordinates never change, so remember them per city. That removes one
+    // network round-trip and makes every later temperature refresh faster.
+    function readGeoCache() {
+      try { return JSON.parse(localStorage.getItem('cb_geo') || '{}'); }
+      catch (e) { return {}; }
+    }
+    function writeGeoCache(cache) {
+      try { localStorage.setItem('cb_geo', JSON.stringify(cache)); } catch (e) {}
+    }
+
+    async function geocodeCity(city, opts) {
+      const cache = readGeoCache();
+      if (cache[city]) return cache[city];
+      const geo = await fetch('https://geocoding-api.open-meteo.com/v1/search?name=' +
+        encodeURIComponent(city) + '&count=10&countryCode=IN&language=en', opts)
+        .then(r => r.json());
+      const all = geo.results || [];
+      const results = all.filter(r => !r.country_code ||
+        String(r.country_code).toUpperCase() === 'IN' || r.country === 'India');
+      if (!results.length) throw new Error('City not found');
+      // Some Indian city names exist in more than one state (e.g. Aurangabad).
+      // Prefer an exact name match, then the largest city, so the forecast is
+      // pinned to the right place.
+      const wanted = city.trim().toLowerCase();
+      const exact = results.filter(r => (r.name || '').toLowerCase() === wanted);
+      const pool = exact.length ? exact : results;
+      pool.sort((a, b) => (b.population || 0) - (a.population || 0));
+      const g = pool[0];
+      const point = { latitude: g.latitude, longitude: g.longitude, name: g.name, admin1: g.admin1 || '' };
+      cache[city] = point;
+      writeGeoCache(cache);
+      return point;
     }
 
     const citySelect = document.getElementById('citySelect');
@@ -443,40 +494,61 @@
       loadWeather(true);
     });
 
+    const weatherAborts = {};   // one in-flight request per building
+
     async function loadWeather(force) {
       const b = activeBuilding();
       fillCitySelect(citySelect, b.city);
       document.getElementById('weatherUpdated').textContent = '';
 
       const cache = b.weather;
-      // Auto-refresh: use a 10-minute cache, but force-refresh when asked.
-      if (!force && cache && Date.now() - cache.ts < 10 * 60 * 1000) {
+      // Only reuse a reading that is fresh AND for the city we're showing.
+      if (!force && cache && cache.city === b.city &&
+          Date.now() - cache.ts < CACHE_MAX_AGE_MS) {
         renderWeather(cache);
         return;
       }
+
+      // Cancel any earlier request for this building so a slow, stale response
+      // can never overwrite a newer city or refresh.
+      if (weatherAborts[b.id]) weatherAborts[b.id].abort();
+      const ctrl = new AbortController();
+      weatherAborts[b.id] = ctrl;
+      const fetchOpts = { cache: 'no-store', signal: ctrl.signal };
+      const requestCity = b.city;
 
       document.getElementById('weatherMsg').textContent = 'Fetching live forecast for ' + b.city + '…';
       document.getElementById('weatherBody').innerHTML = '';
       document.getElementById('weatherSuggestion').textContent = '';
 
       try {
-        const geo = await fetch('https://geocoding-api.open-meteo.com/v1/search?name=' +
-          encodeURIComponent(b.city) + '&count=1&countryCode=IN&language=en').then(r => r.json());
-        if (store.activeId !== b.id) return;   // user switched buildings mid-fetch
-        if (!geo.results || !geo.results.length) throw new Error('City not found');
-        const g = geo.results[0];
+        const g = await geocodeCity(b.city, fetchOpts);
+        if (store.activeId !== b.id || b.city !== requestCity) return;
+
         const fc = await fetch('https://api.open-meteo.com/v1/forecast?latitude=' + g.latitude +
           '&longitude=' + g.longitude +
-          '&current=temperature_2m,weather_code' +
-          '&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=auto&forecast_days=5')
-          .then(r => r.json());
-        if (store.activeId !== b.id) return;
+          '&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code' +
+          '&daily=temperature_2m_max,temperature_2m_min,weather_code' +
+          '&temperature_unit=celsius&timezone=auto&forecast_days=5&_=' + Date.now(),
+          fetchOpts).then(r => r.json());
+        if (store.activeId !== b.id || b.city !== requestCity) return;
+        if (!fc.current || typeof fc.current.temperature_2m !== 'number') {
+          throw new Error('No temperature in response');
+        }
+        if (!fc.daily || !Array.isArray(fc.daily.time)) {
+          throw new Error('No daily forecast in response');
+        }
 
         const w = {
           ts: Date.now(),
-          measured: fc.current.time,  // the time the weather station published this reading
+          measured: fc.current.time,          // city-local station time
+          tz: fc.timezone === 'Asia/Kolkata' ? 'IST' : (fc.timezone_abbreviation || ''),
           city: b.city,
-          temp: Math.round(fc.current.temperature_2m),
+          temp: Number(fc.current.temperature_2m.toFixed(1)),
+          feels: typeof fc.current.apparent_temperature === 'number'
+            ? Number(fc.current.apparent_temperature.toFixed(1)) : null,
+          humidity: typeof fc.current.relative_humidity_2m === 'number'
+            ? Math.round(fc.current.relative_humidity_2m) : null,
           code: fc.current.weather_code,
           daily: fc.daily.time.map((t, i) => ({
             day: shortDay(t),
@@ -489,38 +561,51 @@
         saveStore(store);
         renderWeather(w);
       } catch (err) {
-        if (store.activeId !== b.id) return;
+        if (err && err.name === 'AbortError') return;
+        if (store.activeId !== b.id || b.city !== requestCity) return;
         renderWeather(null);
+      } finally {
+        if (weatherAborts[b.id] === ctrl) delete weatherAborts[b.id];
       }
     }
 
     function renderWeather(w) {
       const body = document.getElementById('weatherBody');
+      const msg = document.getElementById('weatherMsg');
       const sug = document.getElementById('weatherSuggestion');
       const updated = document.getElementById('weatherUpdated');
       if (!w) {
-        document.getElementById('weatherMsg').textContent =
+        body.innerHTML = '';
+        msg.textContent =
           'Could not reach the weather service — check your internet and tap "↻ Refresh weather" to try again.';
         sug.textContent = '';
         updated.textContent = '';
         return;
       }
+      msg.textContent = '';
       const b = activeBuilding();
       const cur = wmo(w.code);
-      const tonightsLow = w.daily[0].lo;
+      const tonightsLow = w.daily && w.daily.length ? w.daily[0].lo : null;
+
       // The station's own publication time — proves the feed is live even
       // when the temperature itself hasn't changed.
       let measured = '';
       if (w.measured) {
-        const m = new Date(w.measured);
         measured = '<span class="weather-sub">station reading at ' +
-          m.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) + '</span>';
+          stationTime(w.measured) + (w.tz ? ' ' + w.tz : '') + '</span>';
       }
+      // Extra detail makes the reading more useful and more precise.
+      const bits = [];
+      if (w.feels != null) bits.push('feels like ' + w.feels.toFixed(1) + '°C');
+      if (w.humidity != null) bits.push(w.humidity + '% humidity');
+      const detail = bits.length ? '<span class="weather-sub">' + bits.join(' · ') + '</span>' : '';
+
       let html = '<div class="weather-now"><span class="weather-icon">' + cur[0] + '</span>' +
-        '<div><span class="weather-temp">' + w.temp + '°C</span>' +
-        '<span class="weather-desc">' + cur[1] + ' in ' + w.city + '</span>' + measured + '</div></div>';
+        '<div><span class="weather-temp">' + Number(w.temp).toFixed(1) + '°C</span> ' +
+        '<span class="weather-desc">' + cur[1] + ' in ' + w.city + '</span>' +
+        detail + measured + '</div></div>';
       html += '<div class="weather-days">';
-      w.daily.forEach(d => {
+      (w.daily || []).forEach(d => {
         const c = wmo(d.code);
         html += '<div class="weather-day"><span class="wd-name">' + d.day + '</span>' +
           '<span class="wd-icon">' + c[0] + '</span>' +
@@ -536,10 +621,9 @@
         void t.offsetWidth;
         t.classList.add('flash');
       }
-      updated.textContent = 'Fetched ' + clockTime(w.ts) + ' · next auto-check in about ' +
-        (CHECK_EVERY_MIN - Math.floor((Date.now() - w.ts) / 60000)) + ' min';
-      updateNextCheck();
+      updateWeatherAge();
 
+      if (tonightsLow == null) return;
       if (tonightsLow <= 24) {
         const est = Math.round(b.monthlyBill * 0.011);
         sug.textContent = '🌙 Cool night ahead (' + tonightsLow + '°C) — easing off cooling overnight could save about ₹' +
@@ -552,7 +636,7 @@
     }
 
     // ---- Everything ----
-    function renderAll() {
+    function renderAll(forceWeather) {
       const b = activeBuilding();
       document.getElementById('billInput').value = b.monthlyBill;
       document.getElementById('sizeInput').value = b.sizeSqft;
@@ -561,16 +645,17 @@
       drawChart();
       updateEstimate();
       drawAlerts();
-      loadWeather();
+      loadWeather(!!forceWeather);
     }
 
-    // Show when the next automatic weather check happens.
-    function updateNextCheck() {
+    // Show how fresh the reading is, and how often we poll.
+    function updateWeatherAge() {
       const b = activeBuilding();
       const el = document.getElementById('weatherUpdated');
-      if (!b.weather) return;
-      const mins = Math.max(0, CHECK_EVERY_MIN - Math.floor((Date.now() - b.weather.ts) / 60000));
-      el.textContent = 'Fetched ' + clockTime(b.weather.ts) + ' · next auto-check in about ' + mins + ' min';
+      const body = document.getElementById('weatherBody');
+      if (!b.weather || !body.children.length) { el.textContent = ''; return; }
+      el.textContent = 'Updated ' + timeAgo(b.weather.ts) +
+        ' · auto-refresh every ' + CHECK_EVERY_SEC + 's';
     }
 
     document.getElementById('btnLogout').addEventListener('click', () => {
@@ -578,17 +663,19 @@
       window.location.href = 'index.html';
     });
 
-    const CHECK_EVERY_MIN = 5;  // how often we check the weather
-    renderAll();
+    renderAll(true);   // opening the dashboard always gets a fresh reading
     setInterval(updateScoreboard, 3000);
-    // Real weather measurements update every 15 minutes at the source,
-    // so we auto-check every 5 minutes even while the page is open.
-    setInterval(() => { loadWeather(true); }, CHECK_EVERY_MIN * 60 * 1000);
-    setInterval(updateNextCheck, 20000);
-    // Coming back to the tab forces a fresh check right away.
+    // Poll once a minute so a new station reading appears almost immediately.
+    // Skip while the tab is hidden; coming back triggers a fresh check below.
+    setInterval(() => {
+      if (!document.hidden) loadWeather(true);
+    }, CHECK_EVERY_SEC * 1000);
+    setInterval(updateWeatherAge, 5000);
+    // Coming back to the tab (or window) forces a fresh check right away.
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden) loadWeather(true);
     });
+    window.addEventListener('focus', () => loadWeather(true));
   </script>
 </body>
 </html>
